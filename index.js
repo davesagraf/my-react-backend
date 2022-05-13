@@ -1,18 +1,21 @@
-const PORT = 8000;
-
 const express = require("express");
+require('@prisma/client');
 const app = express();
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+require('dotenv').config();
+const session = require("express-session");
+const cors = require('cors')
+const store = new session.MemoryStore();
+const PORT = process.env.PORT || 8000;
+
 const indexRouter = require('./controllers');
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(__dirname + "/public"));
-
-
+// redirect to routes/index.js
 app.use('/', indexRouter);
+app.use(cors())
 
 app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-  });
+  console.log(`server is running on port ${PORT}`);
+});

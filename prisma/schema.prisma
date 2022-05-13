@@ -45,7 +45,9 @@ model Profile {
 model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
-  name    String?
+  password String  @unique
+  first_name    String?
+  last_name    String?
   posts   Post[]
   profile Profile?
   comments Comment[]
