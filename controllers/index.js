@@ -23,6 +23,9 @@ router.get("/posts/all", auth, postService.getAllPosts);
 //get posts with limit from request
 router.get("/posts/all/:lim", auth, postService.getPostsWithLimit);
 
+//get current post
+router.get("/posts/post/:id", auth, postService.getCurrentPost )
+
 //add comment
 router.post("/comments/add", auth, postService.addComment);
 

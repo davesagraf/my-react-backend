@@ -87,6 +87,36 @@ const getAllPosts = async (req, res) => {
     }
   };
 
+
+  const getCurrentPost = async (req, res) => {
+    const token = req.header("Authorization");
+    const decoded = jwtToken.decode(token);
+  
+    const userId = decoded.payload.id;
+    const id = userId;
+    const postId = JSON.parse(req.params.id)
+  
+  
+    try {
+      const currentPost = await prisma.post.findUnique({
+          where: {
+              id: postId
+          }
+      });
+  
+      if (currentPost) {
+        res.status(200).json({
+          message: "Post found!",
+          currentPost
+        });
+      }
+  
+      // res.redirect("main");
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }; 
+
 const addComment = async (req, res) => {
     const token = req.header("Authorization");
     const decoded = jwtToken.decode(token);
@@ -115,4 +145,4 @@ const addComment = async (req, res) => {
   };
 
 
-module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit };
+module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost };
