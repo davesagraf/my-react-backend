@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 8000;
 
 const indexRouter = require('./controllers');
 const bodyParser = require('body-parser');
+const auth = require("./middlewares/auth");
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
