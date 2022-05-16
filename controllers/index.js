@@ -14,4 +14,6 @@ router.get("/user/profile/", auth, userService.getUserProfile);
 
 router.post("/posts/add", auth, postService.addPost);
 
+router.post("/comments/add", auth, postService.addComment);
+
 module.exports = router;
