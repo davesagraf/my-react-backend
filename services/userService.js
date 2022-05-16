@@ -3,7 +3,8 @@ const app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
+const jwt = require("../utils/jwt")
+const jwtToken = require('jsonwebtoken')
 const createError = require("http-errors");
 
 app.use(express.json());
@@ -68,7 +69,7 @@ const loginUser = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   const token = req.header("Authorization")
-  const decoded = jwt.decode(token);
+  const decoded = jwtToken.decode(token);
 
   const userId = decoded.payload.id;
   const id = userId;
