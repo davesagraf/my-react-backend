@@ -145,6 +145,30 @@ const getAllPosts = async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   };
+
+  const deletePost = async (req, res) => {
+    const token = req.header("Authorization");
+    const decoded = jwtToken.decode(token);
+  
+    const userId = decoded.payload.id;
+    const id = userId;
+    const postId = JSON.parse(req.params.id)
+
+    try {
+        const postToDelete = await prisma.post.delete({
+            where: { id: postId }
+          })
+  
+        res.status(204).json({
+          message: "Post deleted!",
+        });
+      
+  
+      // res.redirect("main");
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
   
 
 const addComment = async (req, res) => {
@@ -175,4 +199,4 @@ const addComment = async (req, res) => {
   };
 
 
-module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost, updatePost };
+module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost, updatePost, deletePost };

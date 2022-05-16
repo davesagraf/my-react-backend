@@ -29,6 +29,9 @@ router.get("/posts/post/:id", auth, postService.getCurrentPost );
 //udpate post
 router.put("/posts/post/:id", auth, postService.updatePost );
 
+//delete post
+router.delete("/posts/post/:id", auth, postService.deletePost );
+
 //add comment
 router.post("/comments/add", auth, postService.addComment);
 
