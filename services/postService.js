@@ -198,5 +198,34 @@ const addComment = async (req, res) => {
     }
   };
 
+  const updateComment = async (req, res) => {
+    const token = req.header("Authorization");
+    const decoded = jwtToken.decode(token);
+  
+    const userId = decoded.payload.id;
+    const id = userId;
+    const commentId = JSON.parse(req.params.id)
 
-module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost, updatePost, deletePost };
+    const { title, postId } = req.body;
+  
+    try {
+        const currentComment = await prisma.comment.update({
+            where: { id: commentId },
+            data: { title }
+          })
+  
+      if (currentComment) {
+        res.status(200).json({
+          message: "Comment successfully updated!",
+          currentComment
+        });
+      }
+  
+      // res.redirect("main");
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
+
+module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost, updatePost, deletePost, updateComment };

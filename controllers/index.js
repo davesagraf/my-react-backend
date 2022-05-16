@@ -35,4 +35,7 @@ router.delete("/posts/post/:id", auth, postService.deletePost );
 //add comment
 router.post("/comments/add", auth, postService.addComment);
 
+//udpate comment
+router.put("/comments/comment/:id", auth, postService.updateComment );
+
 module.exports = router;
