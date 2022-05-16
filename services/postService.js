@@ -37,195 +37,222 @@ const addPost = async (req, res) => {
 };
 
 const getAllPosts = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
-  
-  
-    try {
-      const allPosts = await prisma.post.findMany();
-  
-      if (allPosts) {
-        res.status(200).json({
-          message: "Posts found!",
-          allPosts
-        });
-      }
-  
-      // res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  };
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
 
-  const getPostsWithLimit = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
+  const userId = decoded.payload.id;
+  const id = userId;
 
-    const postLimit = JSON.parse(req.params.lim)
-  
-    try {
-      const postsWithLimit = await prisma.post.findMany({
-        take: postLimit
-      })
-  
-      if (postsWithLimit) {
-        res.status(200).json({
-          message: "Posts found!",
-          postsWithLimit
-        });
-      }
-  
-      // res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  };
+  try {
+    const allPosts = await prisma.post.findMany();
 
-
-  const getCurrentPost = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
-    const postId = JSON.parse(req.params.id)
-  
-  
-    try {
-      const currentPost = await prisma.post.findUnique({
-          where: {
-              id: postId
-          }
+    if (allPosts) {
+      res.status(200).json({
+        message: "Posts found!",
+        allPosts,
       });
-  
-      if (currentPost) {
-        res.status(200).json({
-          message: "Post found!",
-          currentPost
-        });
-      }
-  
-      // res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
     }
-  };
 
-  const updatePost = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
-    const postId = JSON.parse(req.params.id)
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-    const { title, description } = req.body;
-  
-    try {
-        const currentPost = await prisma.post.update({
-            where: { id: postId },
-            data: { title, description },
-          })
-  
-      if (currentPost) {
-        res.status(200).json({
-          message: "Post successfully updated!",
-          currentPost
-        });
-      }
-  
-      // res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+const getPostsWithLimit = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+
+  const postLimit = JSON.parse(req.params.lim);
+
+  try {
+    const postsWithLimit = await prisma.post.findMany({
+      take: postLimit,
+    });
+
+    if (postsWithLimit) {
+      res.status(200).json({
+        message: "Posts found!",
+        postsWithLimit,
+      });
     }
-  };
 
-  const deletePost = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
-    const postId = JSON.parse(req.params.id)
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-    try {
-        const postToDelete = await prisma.post.delete({
-            where: { id: postId }
-          })
-  
-        res.status(204).json({
-          message: "Post deleted!",
-        });
-      
-  
-      // res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+const getCurrentPost = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+  const postId = JSON.parse(req.params.id);
+
+  try {
+    const currentPost = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (currentPost) {
+      res.status(200).json({
+        message: "Post found!",
+        currentPost,
+      });
     }
-  };
-  
+
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const updatePost = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+  const postId = JSON.parse(req.params.id);
+
+  const { title, description } = req.body;
+
+  try {
+    const currentPost = await prisma.post.update({
+      where: { id: postId },
+      data: { title, description },
+    });
+
+    if (currentPost) {
+      res.status(200).json({
+        message: "Post successfully updated!",
+        currentPost,
+      });
+    }
+
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const deletePost = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+  const postId = JSON.parse(req.params.id);
+
+  try {
+    const postToDelete = await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    res.status(204).json({
+      message: "Post deleted!",
+    });
+
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 const addComment = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
-  
-    const { title, postId } = req.body;
-  
-    try {
-      const newComment = await prisma.comment.create({
-        data: { title, authorId: id, postId },
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+
+  const { title, postId } = req.body;
+
+  try {
+    const newComment = await prisma.comment.create({
+      data: { title, authorId: id, postId },
+    });
+
+    if (newComment) {
+      res.status(201).json({
+        message: "New comment created!",
+        newComment,
       });
-  
-      if (newComment) {
-        res.status(201).json({
-          message: "New comment created!",
-          newComment,
-        });
-      }
-  
+    }
+
     //   res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const updateComment = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+  const commentId = JSON.parse(req.params.id);
+
+  const { title, postId } = req.body;
+
+  try {
+    const currentComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: { title },
+    });
+
+    if (currentComment) {
+      res.status(200).json({
+        message: "Comment successfully updated!",
+        currentComment,
+      });
     }
-  };
 
-  const updateComment = async (req, res) => {
-    const token = req.header("Authorization");
-    const decoded = jwtToken.decode(token);
-  
-    const userId = decoded.payload.id;
-    const id = userId;
-    const commentId = JSON.parse(req.params.id)
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-    const { title, postId } = req.body;
-  
-    try {
-        const currentComment = await prisma.comment.update({
-            where: { id: commentId },
-            data: { title }
-          })
-  
-      if (currentComment) {
-        res.status(200).json({
-          message: "Comment successfully updated!",
-          currentComment
-        });
-      }
-  
-      // res.redirect("main");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  };
+const deleteComment = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
 
+  const userId = decoded.payload.id;
+  const id = userId;
+  const commentId = JSON.parse(req.params.id);
 
-module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost, updatePost, deletePost, updateComment };
+  try {
+    const commentToDelete = await prisma.comment.delete({
+      where: { id: commentId },
+    });
+
+    res.status(204).json({
+      message: "Comment deleted!",
+    });
+
+    // res.redirect("main");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = {
+  addPost,
+  addComment,
+  getAllPosts,
+  getPostsWithLimit,
+  getCurrentPost,
+  updatePost,
+  deletePost,
+  updateComment,
+  deleteComment,
+};
