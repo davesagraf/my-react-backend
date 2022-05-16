@@ -36,6 +36,57 @@ const addPost = async (req, res) => {
   }
 };
 
+const getAllPosts = async (req, res) => {
+    const token = req.header("Authorization");
+    const decoded = jwtToken.decode(token);
+  
+    const userId = decoded.payload.id;
+    const id = userId;
+  
+  
+    try {
+      const allPosts = await prisma.post.findMany();
+  
+      if (allPosts) {
+        res.status(200).json({
+          message: "Posts found!",
+          allPosts
+        });
+      }
+  
+      // res.redirect("main");
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
+  const getPostsWithLimit = async (req, res) => {
+    const token = req.header("Authorization");
+    const decoded = jwtToken.decode(token);
+  
+    const userId = decoded.payload.id;
+    const id = userId;
+
+    const postLimit = JSON.parse(req.params.lim)
+  
+    try {
+      const postsWithLimit = await prisma.post.findMany({
+        take: postLimit
+      })
+  
+      if (postsWithLimit) {
+        res.status(200).json({
+          message: "Posts found!",
+          postsWithLimit
+        });
+      }
+  
+      // res.redirect("main");
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
 const addComment = async (req, res) => {
     const token = req.header("Authorization");
     const decoded = jwtToken.decode(token);
@@ -43,17 +94,11 @@ const addComment = async (req, res) => {
     const userId = decoded.payload.id;
     const id = userId;
   
-    const { title } = req.body;
-
-    const userPost = await prisma.post.findMany({where: {
-        authorId: id
-      }});
-
-    console.log(userPost)
+    const { title, postId } = req.body;
   
     try {
       const newComment = await prisma.comment.create({
-        data: { title, authorId: id, postId: userPost.id },
+        data: { title, authorId: id, postId },
       });
   
       if (newComment) {
@@ -70,5 +115,4 @@ const addComment = async (req, res) => {
   };
 
 
-
-module.exports = { addPost, addComment };
+module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit };
