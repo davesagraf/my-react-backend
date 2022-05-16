@@ -24,7 +24,10 @@ router.get("/posts/all", auth, postService.getAllPosts);
 router.get("/posts/all/:lim", auth, postService.getPostsWithLimit);
 
 //get current post
-router.get("/posts/post/:id", auth, postService.getCurrentPost )
+router.get("/posts/post/:id", auth, postService.getCurrentPost );
+
+//udpate post
+router.put("/posts/post/:id", auth, postService.updatePost );
 
 //add comment
 router.post("/comments/add", auth, postService.addComment);

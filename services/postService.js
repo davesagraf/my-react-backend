@@ -115,7 +115,37 @@ const getAllPosts = async (req, res) => {
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }; 
+  };
+
+  const updatePost = async (req, res) => {
+    const token = req.header("Authorization");
+    const decoded = jwtToken.decode(token);
+  
+    const userId = decoded.payload.id;
+    const id = userId;
+    const postId = JSON.parse(req.params.id)
+
+    const { title, description } = req.body;
+  
+    try {
+        const currentPost = await prisma.post.update({
+            where: { id: postId },
+            data: { title, description },
+          })
+  
+      if (currentPost) {
+        res.status(200).json({
+          message: "Post successfully updated!",
+          currentPost
+        });
+      }
+  
+      // res.redirect("main");
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+  
 
 const addComment = async (req, res) => {
     const token = req.header("Authorization");
@@ -145,4 +175,4 @@ const addComment = async (req, res) => {
   };
 
 
-module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost };
+module.exports = { addPost, addComment, getAllPosts, getPostsWithLimit, getCurrentPost, updatePost };
