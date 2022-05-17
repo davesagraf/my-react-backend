@@ -19,7 +19,7 @@ const addPost = async (req, res) => {
 
   try {
     const newPost = await prisma.post.create({
-      data: { title, description, user_id: id }
+      data: { title, description, user_id: id },
     });
 
     if (newPost) {
@@ -40,7 +40,9 @@ const getAllPosts = async (req, res) => {
   const id = userId;
 
   try {
-    const allPosts = await prisma.post.findMany();
+    const allPosts = await prisma.post.findMany({
+      include: { comments: true },
+    });
     const posts = allPosts;
 
     if (allPosts) {
@@ -64,7 +66,7 @@ const getPostsWithLimit = async (req, res) => {
 
   try {
     const postsWithLimit = await prisma.post.findMany({
-      take: postLimit,
+      take: postLimit, include: {comments: true}
     });
 
     if (postsWithLimit) {
@@ -90,6 +92,7 @@ const getCurrentPost = async (req, res) => {
       where: {
         id: postId,
       },
+      include: { comments: true }
     });
 
     if (currentPost) {
