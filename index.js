@@ -6,11 +6,20 @@ const cors = require('cors')
 const PORT = process.env.PORT || 8000;
 
 const indexRouter = require('./controllers');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 
-app.use(cors())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+const corsOptions = {
+  exposedHeaders: 'Authorization',
+};
+
+app.use(cors(corsOptions));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+// app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(bodyParser.json())
 
 app.use('/', indexRouter);
 

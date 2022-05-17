@@ -12,12 +12,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + "/public"));
 
 const registerUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, first_name, last_name } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10); //10 is the bcrypt salt rounds
     let user = await prisma.user.create({
-      data: { email, password: hashedPassword },
+      data: { email, password: hashedPassword, first_name, last_name },
     });
 
 
@@ -59,8 +59,7 @@ const loginUser = async (req, res) => {
   if (checkPassword)
   res.header('Authorization', accessToken);
     res.status(200).json({
-      message: "Login success!",
-      user: user.email
+      message: "Login success!", id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name
     });
 
   return { ...user, accessToken };
@@ -79,7 +78,7 @@ const getUserProfile = async (req, res) => {
   }});
 
   try {
-      res.status(200).json({message: "Success", user: user})
+      res.status(200).json({message: "Success", id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name})
   } catch (e) {
      res.status(401).json({message: "Not authorized"})
   }

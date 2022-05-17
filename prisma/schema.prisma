@@ -16,8 +16,8 @@ model Post {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   description   String?  @db.VarChar(255)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id  Int
   comments Comment[]
 }
 
@@ -27,10 +27,10 @@ model Comment {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    Int
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id  Int
+  post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id    Int
 }
 
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middlewares/auth');
 const userService = require("../services/userService");
 const postService = require("../services/postService");
-
+const commentService = require("../services/commentService");
 
 //register user
 router.post("/auth/sign_up", userService.registerUser);
@@ -24,21 +24,21 @@ router.get("/posts/all", auth, postService.getAllPosts);
 router.get("/posts/all/:lim", auth, postService.getPostsWithLimit);
 
 //get current post
-router.get("/posts/post/:id", auth, postService.getCurrentPost );
+router.get("/posts/post/:id", auth, postService.getCurrentPost);
 
 //udpate post
-router.put("/posts/post/:id", auth, postService.updatePost );
+router.put("/posts/post/:id", auth, postService.updatePost);
 
 //delete post
-router.delete("/posts/post/:id", auth, postService.deletePost );
+router.delete("/posts/post/:id", auth, postService.deletePost);
 
 //add comment
-router.post("/comments/add", auth, postService.addComment);
+router.post("/comments/add", auth, commentService.addComment);
 
 //udpate comment
-router.put("/comments/comment/:id", auth, postService.updateComment);
+router.put("/comments/comment/:id", auth, commentService.updateComment);
 
 //delete comment
-router.delete("/comments/comment/:id", auth, postService.deleteComment);
+router.delete("/comments/comment/:id", auth, commentService.deleteComment);
 
 module.exports = router;

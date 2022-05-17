@@ -3,10 +3,9 @@ const app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const jwtToken = require("jsonwebtoken");
-const createError = require("http-errors");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
 const addPost = async (req, res) => {
@@ -20,14 +19,11 @@ const addPost = async (req, res) => {
 
   try {
     const newPost = await prisma.post.create({
-      data: { title, description, authorId: id },
+      data: { title, description, user_id: id }
     });
 
     if (newPost) {
-      res.status(201).json({
-        message: "New post created!",
-        newPost,
-      });
+      res.status(201).json(newPost);
     }
 
     // res.redirect("main");
@@ -45,12 +41,10 @@ const getAllPosts = async (req, res) => {
 
   try {
     const allPosts = await prisma.post.findMany();
+    const posts = allPosts;
 
     if (allPosts) {
-      res.status(200).json({
-        message: "Posts found!",
-        allPosts,
-      });
+      res.status(200).json([...posts]);
     }
 
     // res.redirect("main");
@@ -74,10 +68,7 @@ const getPostsWithLimit = async (req, res) => {
     });
 
     if (postsWithLimit) {
-      res.status(200).json({
-        message: "Posts found!",
-        postsWithLimit,
-      });
+      res.status(200).json([...postsWithLimit]);
     }
 
     // res.redirect("main");
@@ -102,10 +93,7 @@ const getCurrentPost = async (req, res) => {
     });
 
     if (currentPost) {
-      res.status(200).json({
-        message: "Post found!",
-        currentPost,
-      });
+      res.status(200).json(currentPost);
     }
 
     // res.redirect("main");
@@ -131,10 +119,7 @@ const updatePost = async (req, res) => {
     });
 
     if (currentPost) {
-      res.status(200).json({
-        message: "Post successfully updated!",
-        currentPost,
-      });
+      res.status(200).json(currentPost);
     }
 
     // res.redirect("main");
@@ -166,93 +151,11 @@ const deletePost = async (req, res) => {
   }
 };
 
-const addComment = async (req, res) => {
-  const token = req.header("Authorization");
-  const decoded = jwtToken.decode(token);
-
-  const userId = decoded.payload.id;
-  const id = userId;
-
-  const { title, postId } = req.body;
-
-  try {
-    const newComment = await prisma.comment.create({
-      data: { title, authorId: id, postId },
-    });
-
-    if (newComment) {
-      res.status(201).json({
-        message: "New comment created!",
-        newComment,
-      });
-    }
-
-    //   res.redirect("main");
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const updateComment = async (req, res) => {
-  const token = req.header("Authorization");
-  const decoded = jwtToken.decode(token);
-
-  const userId = decoded.payload.id;
-  const id = userId;
-  const commentId = JSON.parse(req.params.id);
-
-  const { title, postId } = req.body;
-
-  try {
-    const currentComment = await prisma.comment.update({
-      where: { id: commentId },
-      data: { title },
-    });
-
-    if (currentComment) {
-      res.status(200).json({
-        message: "Comment successfully updated!",
-        currentComment,
-      });
-    }
-
-    // res.redirect("main");
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const deleteComment = async (req, res) => {
-  const token = req.header("Authorization");
-  const decoded = jwtToken.decode(token);
-
-  const userId = decoded.payload.id;
-  const id = userId;
-  const commentId = JSON.parse(req.params.id);
-
-  try {
-    const commentToDelete = await prisma.comment.delete({
-      where: { id: commentId },
-    });
-
-    res.status(204).json({
-      message: "Comment deleted!",
-    });
-
-    // res.redirect("main");
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
 module.exports = {
   addPost,
-  addComment,
   getAllPosts,
   getPostsWithLimit,
   getCurrentPost,
   updatePost,
   deletePost,
-  updateComment,
-  deleteComment,
 };
