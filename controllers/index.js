@@ -41,4 +41,10 @@ router.put("/comments/comment/:id", auth, commentService.updateComment);
 //delete comment
 router.delete("/comments/comment/:id", auth, commentService.deleteComment);
 
+//like a post
+router.put("/posts/like/:id", auth, postService.likePost);
+
+//unlike a post
+router.put("/posts/unlike/:id", auth, postService.unlikePost);
+
 module.exports = router;

@@ -17,8 +17,19 @@ model Post {
   title     String   @db.VarChar(255)
   description   String?  @db.VarChar(255)
   author    User     @relation(fields: [user_id], references: [id])
-  user_id  Int
+  user_id   Int      @unique
   comments Comment[]
+  likes    Like[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id   Int      @unique
+  post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id   Int      @unique
 }
 
 model Comment {
@@ -28,11 +39,10 @@ model Comment {
   title     String   @db.VarChar(255)
   content   String?
   author    User     @relation(fields: [user_id], references: [id])
-  user_id  Int
+  user_id  Int       @unique
   post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  post_id    Int
+  post_id    Int     @unique
 }
-
 
 model User {
   id      Int      @id @default(autoincrement())
@@ -42,4 +52,5 @@ model User {
   last_name    String?
   posts   Post[]
   comments Comment[]
+  likes Like[]
 }

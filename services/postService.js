@@ -20,7 +20,7 @@ const addPost = async (req, res) => {
   try {
     const newPost = await prisma.post.create({
       data: { title, description, user_id: id },
-    });
+  });
 
     if (newPost) {
       res.status(201).json(newPost);
@@ -41,7 +41,7 @@ const getAllPosts = async (req, res) => {
 
   try {
     const allPosts = await prisma.post.findMany({
-      include: { comments: true },
+      include: { comments: true, likes: true },
     });
     const posts = allPosts;
 
@@ -66,7 +66,7 @@ const getPostsWithLimit = async (req, res) => {
 
   try {
     const postsWithLimit = await prisma.post.findMany({
-      take: postLimit, include: {comments: true}
+      take: postLimit, include: {comments: true, likes: true}
     });
 
     if (postsWithLimit) {
@@ -92,7 +92,7 @@ const getCurrentPost = async (req, res) => {
       where: {
         id: postId,
       },
-      include: { comments: true }
+      include: { comments: true, likes: true }
     });
 
     if (currentPost) {
@@ -119,6 +119,10 @@ const updatePost = async (req, res) => {
     const currentPost = await prisma.post.update({
       where: { id: postId },
       data: { title, description },
+      include: {
+        comments: true,
+        likes: true,
+      },
     });
 
     if (currentPost) {
@@ -154,6 +158,84 @@ const deletePost = async (req, res) => {
   }
 };
 
+const likePost = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const postId = JSON.parse(req.params.id);
+
+  try {
+    const postAlreadyLikedByUser = await prisma.like.findUnique({
+      where: { user_id: userId },
+     })
+
+     if(postAlreadyLikedByUser) {
+      return res.status(400).json({message: "You already liked this post"})
+    }
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+
+  try {
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        likes: {
+          create: {
+            user_id: userId
+          },
+        },
+      },
+    })
+
+    res.status(200).json({message: "Post liked!"});
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const unlikePost = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const postId = JSON.parse(req.params.id);
+
+  try {
+    const postAlreadyLikedByUser = await prisma.like.findUnique({
+      where: { user_id: userId },
+     })
+
+     if(!postAlreadyLikedByUser) {
+      return res.status(400).json({message: "You haven't liked this post yet"})
+    }
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+
+  try {
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        likes: {
+          delete: {
+            user_id: userId
+          },
+        },
+      },
+    })
+
+    res.status(200).json({message: "Post unliked!"});
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   addPost,
   getAllPosts,
@@ -161,4 +243,6 @@ module.exports = {
   getCurrentPost,
   updatePost,
   deletePost,
+  likePost,
+  unlikePost
 };
