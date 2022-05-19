@@ -27,7 +27,6 @@ const addPost = async (req, res) => {
       res.status(201).json(newPost);
     }
 
-    // res.redirect("main");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -50,7 +49,6 @@ const getAllPosts = async (req, res) => {
       res.status(200).json([...posts]);
     }
 
-    // res.redirect("main");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -74,7 +72,7 @@ const getPostsWithLimit = async (req, res) => {
       res.status(200).json([...postsWithLimit]);
     }
 
-    // res.redirect("main");
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -100,7 +98,6 @@ const getCurrentPost = async (req, res) => {
       res.status(200).json(currentPost);
     }
 
-    // res.redirect("main");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -130,7 +127,7 @@ const updatePost = async (req, res) => {
       res.status(200).json(currentPost);
     }
 
-    // res.redirect("main");
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -153,7 +150,6 @@ const deletePost = async (req, res) => {
       message: "Post deleted!",
     });
 
-    // res.redirect("main");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
