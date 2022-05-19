@@ -19,7 +19,8 @@ const addPost = async (req, res) => {
 
   try {
     const newPost = await prisma.post.create({
-      data: { title, description, user_id: id },
+      data: { title, description, user_id: userId},
+      include: {likes: true, comments: true}
   });
 
     if (newPost) {
@@ -166,8 +167,8 @@ const likePost = async (req, res) => {
   const postId = JSON.parse(req.params.id);
 
   try {
-    const postAlreadyLikedByUser = await prisma.like.findUnique({
-      where: { user_id: userId },
+    const postAlreadyLikedByUser = await prisma.like.findFirst({
+      where: { user_id: userId, post_id: postId },
      })
 
      if(postAlreadyLikedByUser) {
@@ -179,15 +180,8 @@ const likePost = async (req, res) => {
   }
 
   try {
-    const post = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        likes: {
-          create: {
-            user_id: userId
-          },
-        },
-      },
+    const post = await prisma.like.create({
+      data: {user_id: userId, post_id: postId}
     })
 
     res.status(200).json({message: "Post liked!"});
@@ -205,8 +199,8 @@ const unlikePost = async (req, res) => {
   const postId = JSON.parse(req.params.id);
 
   try {
-    const postAlreadyLikedByUser = await prisma.like.findUnique({
-      where: { user_id: userId },
+    const postAlreadyLikedByUser = await prisma.like.findFirst({
+      where: { user_id: userId, post_id: postId },
      })
 
      if(!postAlreadyLikedByUser) {
@@ -218,19 +212,16 @@ const unlikePost = async (req, res) => {
   }
 
   try {
-    const post = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        likes: {
-          delete: {
-            user_id: userId
-          },
-        },
-      },
-    })
+    const postAlreadyLikedByUser = await prisma.like.findFirst({
+      where: { user_id: userId, post_id: postId },
+     })
 
-    res.status(200).json({message: "Post unliked!"});
-
+     if(postAlreadyLikedByUser) {
+       const likeToDelete = await prisma.like.delete({
+         where: {id: postAlreadyLikedByUser.id}
+       })
+       return res.status(200).json({message: "Post unliked!"});
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
