@@ -81,8 +81,78 @@ const deleteComment = async (req, res) => {
   }
 };
 
+const likeComment = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const commentId = JSON.parse(req.params.id);
+
+  try {
+    const commentAlreadyLikedByUser = await prisma.commentLike.findFirst({
+      where: { user_id: userId, comment_id: commentId },
+     })
+
+     if(commentAlreadyLikedByUser) {
+      return res.status(400).json({message: "You already liked this comment"})
+    }
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+
+  try {
+    const commentLike = await prisma.commentLike.create({
+      data: {user_id: userId, comment_id: commentId}
+    })
+
+    res.status(200).json({message: "Comment liked!"});
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+const unlikeComment = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const commentId = JSON.parse(req.params.id);
+
+  try {
+    const commentAlreadyLikedByUser = await prisma.commentLike.findFirst({
+      where: { user_id: userId, comment_id: commentId },
+     })
+
+     if(!commentAlreadyLikedByUser) {
+      return res.status(400).json({message: "You haven't liked this comment yet"})
+    }
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+
+  try {
+    const commentAlreadyLikedByUser = await prisma.commentLike.findFirst({
+      where: { user_id: userId, comment_id: commentId },
+     })
+
+     if(commentAlreadyLikedByUser) {
+       const commentLikeToDelete = await prisma.commentLike.delete({
+         where: {id: commentAlreadyLikedByUser.id}
+       })
+       return res.status(200).json({message: "Comment unliked!"});
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  } 
+}
+
 module.exports = {
   addComment,
   updateComment,
-  deleteComment
+  deleteComment,
+  likeComment,
+  unlikeComment
 };

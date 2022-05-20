@@ -47,4 +47,10 @@ router.put("/posts/like/:id", auth, postService.likePost);
 //unlike a post
 router.put("/posts/unlike/:id", auth, postService.unlikePost);
 
+//like a comment
+router.put("/comments/like/:id", auth, commentService.likeComment);
+
+//unlike a comment
+router.put("/comments/unlike/:id", auth, commentService.unlikeComment);
+
 module.exports = router;
