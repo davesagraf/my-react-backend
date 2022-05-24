@@ -41,6 +41,9 @@ router.put("/comments/comment/:id", auth, commentService.updateComment);
 //delete comment
 router.delete("/comments/comment/:id", auth, commentService.deleteComment);
 
+//get post comments
+router.get("/posts/post/comments/:id", auth, commentService.getPostComments)
+
 //like a post
 router.put("/posts/like/:id", auth, postService.likePost);
 

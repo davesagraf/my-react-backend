@@ -32,6 +32,30 @@ const addComment = async (req, res) => {
   }
 };
 
+const getPostComments = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+  const postId = JSON.parse(req.params.id);
+
+  try {
+    const postComments = await prisma.comment.findMany({
+      where: {
+        post_id: postId,
+      }
+    });
+
+    if (postComments) {
+      res.status(200).json(postComments);
+    }
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const updateComment = async (req, res) => {
   const token = req.header("Authorization");
   const decoded = jwtToken.decode(token);
@@ -154,5 +178,6 @@ module.exports = {
   updateComment,
   deleteComment,
   likeComment,
-  unlikeComment
+  unlikeComment,
+  getPostComments
 };
