@@ -180,8 +180,12 @@ const likePost = async (req, res) => {
   }
 
   try {
+    const postLikeUser = await prisma.user.findUnique({
+      where: { id: userId}
+    })
+
     const post = await prisma.like.create({
-      data: {user_id: userId, post_id: postId}
+      data: {user_id: userId, post_id: postId, user_name: postLikeUser.first_name}
     })
 
     res.status(200).json({message: "Post liked!"});

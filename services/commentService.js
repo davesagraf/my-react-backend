@@ -18,8 +18,12 @@ const addComment = async (req, res) => {
   const { title, post_id } = req.body;
 
   try {
+    const commentUser = await prisma.user.findUnique({
+      where: { id: userId}
+    })
+
     const newComment = await prisma.comment.create({
-      data: { title, user_id: id, post_id: JSON.parse(post_id)},
+      data: { title, user_id: id, post_id: JSON.parse(post_id), user_name: commentUser.first_name },
     });
 
     if (newComment) {
@@ -126,8 +130,12 @@ const likeComment = async (req, res) => {
   }
 
   try {
+    const likeUser = await prisma.user.findUnique({
+      where: { id: userId}
+    })
+
     const commentLike = await prisma.commentLike.create({
-      data: {user_id: userId, comment_id: commentId}
+      data: {user_id: userId, comment_id: commentId, user_name: likeUser.first_name}
     })
 
     res.status(200).json({message: "Comment liked!"});
