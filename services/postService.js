@@ -18,8 +18,12 @@ const addPost = async (req, res) => {
   const { title, description } = req.body;
 
   try {
+    const postUser = await prisma.user.findUnique({
+      where: { id: userId}
+    })
+
     const newPost = await prisma.post.create({
-      data: { title, description, user_id: userId},
+      data: { title, description, user_id: userId, user_name: postUser.first_name },
       include: {likes: true, comments: true}
   });
 

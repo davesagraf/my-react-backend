@@ -17,7 +17,8 @@ model Post {
   title     String   @db.VarChar(255)
   description   String?  @db.VarChar(255)
   author    User     @relation(fields: [user_id], references: [id])
-  user_id   Int      
+  user_id   Int
+  user_name String?      
   comments Comment[]
   likes    Like[]
 }
