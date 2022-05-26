@@ -1,9 +1,88 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
+const express = require("express");
+const app = express();
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const bcrypt = require("bcrypt");
+const jwt = require("../utils/jwt")
+const jwtToken = require('jsonwebtoken')
+const createError = require("http-errors");
 
-const getUsers = async (req,res) => {
-        const users = await prisma.user.findMany()
-        res.json(users)
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(__dirname + "/public"));
+
+const registerUser = async (req, res) => {
+  const { email, password, first_name, last_name } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10); //10 is the bcrypt salt rounds
+    let user = await prisma.user.create({
+      data: { email, password: hashedPassword, first_name, last_name },
+    });
+
+
+    if (user) {
+      res.status(201).json({
+        message: "New user created!",
+        user
+      });
     }
 
-module.exports = { getUsers }
+    res.redirect("signin");
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+
+  res.accessToken = await jwt.signAccessToken(user);
+
+  return res;
+};
+
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  });
+  if (!user) {
+    throw createError.NotFound("User not registered");
+  }
+  const checkPassword = bcrypt.compareSync(password, user.password);
+  if (!checkPassword) {
+    throw createError.Unauthorized("Email address or password not valid");
+  }
+
+  delete user.password;
+  const accessToken = await jwt.signAccessToken(user);
+
+  if (checkPassword)
+  res.header('Authorization', accessToken);
+    res.status(200).json({
+      message: "Login success!", id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name
+    });
+
+  return { ...user, accessToken };
+};
+
+
+const getUserProfile = async (req, res) => {
+  const token = req.header("Authorization")
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+  
+  const user = await prisma.user.findUnique({where: {
+    id
+  }});
+
+  try {
+      res.status(200).json({message: "Success", id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name})
+  } catch (e) {
+     res.status(401).json({message: "Not authorized"})
+  }
+}
+
+
+module.exports = { registerUser, loginUser, getUserProfile };

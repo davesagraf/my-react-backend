@@ -15,11 +15,23 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  comment   Comment?
+  description   String?  @db.VarChar(255)
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  user_name String?      
+  comments Comment[]
+  likes    Like[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  user_name String?      
+  post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id   Int      
 }
 
 model Comment {
@@ -28,25 +40,33 @@ model Comment {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  user_name String?       
+  post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id   Int
+  likes     commentLike[]     
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model commentLike {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  user_name String?      
+  comment      Comment     @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  comment_id   Int      
 }
 
 model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
-  name    String?
+  password String  @unique
+  first_name    String?
+  last_name    String?
   posts   Post[]
-  profile Profile?
   comments Comment[]
+  likes Like[]
+  commentLikes commentLike[]
 }
