@@ -56,4 +56,7 @@ router.put("/comments/like/:id", auth, commentService.likeComment);
 //unlike a comment
 router.put("/comments/unlike/:id", auth, commentService.unlikeComment);
 
+//get comment likes
+router.get("/comments/comment/likes/:id", auth, commentService.getCommentLikes)
+
 module.exports = router;
