@@ -82,6 +82,32 @@ const getPostsWithLimit = async (req, res) => {
   }
 };
 
+const getFavPosts = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+
+  try {
+    const favPosts = await prisma.post.findMany({
+      where: {
+        likes: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+    });
+
+    if (favPosts) {
+      res.status(200).json([...favPosts]);
+    }
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const getCurrentPost = async (req, res) => {
   const token = req.header("Authorization");
   const decoded = jwtToken.decode(token);
@@ -239,5 +265,6 @@ module.exports = {
   updatePost,
   deletePost,
   likePost,
-  unlikePost
+  unlikePost,
+  getFavPosts
 };
