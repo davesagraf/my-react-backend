@@ -23,6 +23,9 @@ router.get("/posts/all", auth, postService.getAllPosts);
 //get posts with limit from request
 router.get("/posts/all/:lim", auth, postService.getPostsWithLimit);
 
+//get fav posts
+router.get("/posts/fav", auth, postService.getFavPosts);
+
 //get current post
 router.get("/posts/post/:id", auth, postService.getCurrentPost);
 
