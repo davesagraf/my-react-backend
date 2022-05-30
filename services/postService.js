@@ -87,12 +87,17 @@ const getFavPosts = async (req, res) => {
   const decoded = jwtToken.decode(token);
 
   const userId = decoded.payload.id;
-  const id = userId;
 
   try {
-    const favPosts = await prisma.like.findMany({
-      where: { user_id: userId },
-     })
+    const favPosts = await prisma.post.findMany({
+      where: {
+        likes: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+    });
 
     if (favPosts) {
       res.status(200).json([...favPosts]);
