@@ -192,12 +192,35 @@ const getCommentLikes = async (req, res) => {
   try {
     const commentLikes = await prisma.commentLike.findMany({
       where: {
-        comment_id: commentId
+        comment_id: commentId, user_id: userId
       }
     });
 
     if (commentLikes) {
-      res.status(200).json(commentLikes);
+      res.status(200).json([...commentLikes]);
+    }
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getAllCommentLikes = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+
+  try {
+    const allCommentLikes = await prisma.commentLike.findMany({
+      where: {
+        user_id: userId
+      }
+    });
+
+    if (allCommentLikes) {
+      res.status(200).json([...allCommentLikes]);
     }
 
   } catch (err) {
@@ -212,5 +235,6 @@ module.exports = {
   likeComment,
   unlikeComment,
   getPostComments,
-  getCommentLikes
+  getCommentLikes,
+  getAllCommentLikes
 };
