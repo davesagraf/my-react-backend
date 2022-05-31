@@ -62,4 +62,7 @@ router.put("/comments/unlike/:id", auth, commentService.unlikeComment);
 //get comment likes
 router.get("/comments/comment/likes/:id", auth, commentService.getCommentLikes)
 
+//get all comment likes
+router.get("/comments/all/likes", auth, commentService.getAllCommentLikes)
+
 module.exports = router;
