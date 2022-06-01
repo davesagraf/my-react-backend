@@ -48,7 +48,7 @@ const getPostComments = async (req, res) => {
     const postComments = await prisma.comment.findMany({
       where: {
         post_id: postId,
-      }
+      }, include: { likes: true }
     });
 
     if (postComments) {
@@ -228,6 +228,28 @@ const getAllCommentLikes = async (req, res) => {
   }
 };
 
+
+const getAllComments = async (req, res) => {
+  const token = req.header("Authorization");
+  const decoded = jwtToken.decode(token);
+
+  const userId = decoded.payload.id;
+  const id = userId;
+
+  try {
+    const allComments = await prisma.comment.findMany({
+      include: { likes: true },
+    });
+
+    if (allComments) {
+      res.status(200).json([...allComments]);
+    }
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   addComment,
   updateComment,
@@ -236,5 +258,6 @@ module.exports = {
   unlikeComment,
   getPostComments,
   getCommentLikes,
-  getAllCommentLikes
+  getAllCommentLikes,
+  getAllComments
 };
