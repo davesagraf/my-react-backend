@@ -213,11 +213,7 @@ const getAllCommentLikes = async (req, res) => {
   const id = userId;
 
   try {
-    const allCommentLikes = await prisma.commentLike.findMany({
-      where: {
-        user_id: userId
-      }
-    });
+    const allCommentLikes = await prisma.commentLike.findMany();
 
     if (allCommentLikes) {
       res.status(200).json([...allCommentLikes]);

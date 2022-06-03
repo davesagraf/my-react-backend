@@ -20,6 +20,9 @@ router.post("/posts/add", auth, postService.addPost);
 //get all posts
 router.get("/posts/all", auth, postService.getAllPosts);
 
+//gel all post likes
+router.get("/posts/all/likes", auth, postService.getAllPostLikes);
+
 //get posts with limit from request
 router.get("/posts/all/:lim", auth, postService.getPostsWithLimit);
 
