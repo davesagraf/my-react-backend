@@ -20,6 +20,9 @@ router.post("/posts/add", auth, postService.addPost);
 //get all posts
 router.get("/posts/all", auth, postService.getAllPosts);
 
+//gel all post likes
+router.get("/posts/all/likes", auth, postService.getAllPostLikes);
+
 //get posts with limit from request
 router.get("/posts/all/:lim", auth, postService.getPostsWithLimit);
 
@@ -60,9 +63,12 @@ router.put("/comments/like/:id", auth, commentService.likeComment);
 router.put("/comments/unlike/:id", auth, commentService.unlikeComment);
 
 //get comment likes
-router.get("/comments/comment/likes/:id", auth, commentService.getCommentLikes)
+router.get("/comments/comment/likes/:id", auth, commentService.getCommentLikes);
 
 //get all comment likes
-router.get("/comments/all/likes", auth, commentService.getAllCommentLikes)
+router.get("/comments/all/likes", auth, commentService.getAllCommentLikes);
+
+//get all comments
+router.get("/comments/all", auth, commentService.getAllComments);
 
 module.exports = router;
